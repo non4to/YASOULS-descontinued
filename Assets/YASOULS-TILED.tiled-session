@@ -1,0 +1,41 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "Maps/testMap.tmx",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "Todos os Ficheiros (*)",
+    "fileStates": {
+        "Maps/testMap.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 535.3333333333333,
+                "y": 399.99999999999994
+            }
+        },
+        "Maps/testMap.tmx#testtiles": {
+            "scaleInDock": 1
+        }
+    },
+    "last.imagePath": "/home/non4to/Gut Hib/YASOULS/Assets/Terrain/Tileset",
+    "map.height": 10,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 64,
+    "map.tileWidth": 64,
+    "map.width": 15,
+    "openFiles": [
+        "Maps/testMap.tmx"
+    ],
+    "project": "YASOULS-TILED.tiled-project",
+    "recentFiles": [
+        "Maps/testMap.tmx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.tileSize": {
+        "height": 64,
+        "width": 64
+    }
+}
