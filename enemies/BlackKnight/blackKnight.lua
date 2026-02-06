@@ -12,20 +12,16 @@ Player = Classic:extend()
 
 local spriteHeight = 192 
 local spriteWidth = 192
-local walkBoxW = 40
-local walkBoxH = 20
-local hurtBoxW = walkBoxW
-local hurtBoxH = 50
+local walkboxW = 40
+local walkboxH = 20
 
 local playerCollisionFilter = function(item, other)
-  if item.layer == 0 then return "slide"
-  else return "cross"
-  end
+  return "slide"
 end
 
 function Player:new(x,y,acceleration,maxSpeed)
-  self.x = x
-  self.y = y
+  self.x = 0
+  self.y = 0
   self.dx = 0
   self.dy = 0
   self.isPlayer=true
@@ -33,13 +29,10 @@ function Player:new(x,y,acceleration,maxSpeed)
   self.location = nil
   
   --walk-box collision
-  self.walkBox = {layer=0, x=self.x, y=self.y, w=walkBoxW, h=walkBoxH} --layer0 -> walls, obstacles, 'walk thought physics'
+  self.walkBox = {x=self.x, y=self.y, w=walkboxW, h=walkboxH}
   World:add(self.walkBox, self.walkBox.x, self.walkBox.y, self.walkBox.w, self.walkBox.h)
 
   --hurt-box collision
-  self.hurtBox = {layer=1, x=self.x, y=self.y, w=hurtBoxW, h=hurtBoxH,} --layer1 -> hurt detections
-  World:add(self.hurtBox, self.hurtBox.x, self.hurtBox.y, self.hurtBox.w, self.hurtBox.h)
-
 
   --atk-box collision
 
@@ -73,7 +66,6 @@ function Player:update(dt)
   local goalX, goalY = self.x + self.dx, self.y + self.dy
   local actualX, actualY, cols, len = World:move(self.walkBox, goalX, goalY, playerCollisionFilter)
   self.x, self.y = actualX, actualY
-  -- World:update(self.hurtBox,self.x,self.y)
   
   -- self.x = self.x + self.dx
   -- self.y = self.y + self.dy
@@ -82,9 +74,7 @@ end
 
 function Player:draw()
   self.currentState:draw(self)
-  love.graphics.rectangle("line", self.x, self.y, walkBoxW, walkBoxH)
-  love.graphics.rectangle("line", self.x, self.y, hurtBoxW, hurtBoxH)
-
+  love.graphics.rectangle("line", self.x, self.y, walkboxW, walkboxH)
 
 end
 
