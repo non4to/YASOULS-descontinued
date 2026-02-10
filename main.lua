@@ -14,6 +14,7 @@ push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {fullscreen =
 
 local playerAcceleration = 0.5
 local playerMaxSpeed = 5
+----------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------
 function love.load()
@@ -24,9 +25,9 @@ function love.load()
   TEST_KEY="d"
 
   World = Bump.newWorld()
-  player = Player(540, 360, playerAcceleration, playerMaxSpeed)
+  player = Player(100, 100, playerAcceleration, playerMaxSpeed)
   
-  R1 = {x=300,y=300,w=50,h=50}
+  R1 = {layer=0, x=300,y=300,w=50,h=50}
   World:add(R1,R1.x,R1.y,R1.w,R1.h)
 
 
@@ -41,9 +42,20 @@ function love.draw()
 
 
   
-  love.graphics.rectangle("line",R1.x,R1.y,R1.w,R1.h)
   player:draw()
 
+
+
+  
+  ------------
+  --DRAW ALL BUMP STUFF
+  local items = World:getItems()
+  for _, item in ipairs(items) do
+    local x, y, w, h = World:getRect(item)
+    love.graphics.rectangle("line", x, y, w, h)
+  end
+  ------------
+  -------------
   push:finish()
 end
 -----------------------------------------------------------------------------

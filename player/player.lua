@@ -14,11 +14,13 @@ local spriteHeight = 192
 local spriteWidth = 192
 local walkBoxW = 40
 local walkBoxH = 20
+local hurtBoxWOffset = 5
 local hurtBoxW = walkBoxW
-local hurtBoxH = 50
+local hurtBoxH = 40
 
 local playerCollisionFilter = function(item, other)
-  if item.layer == 0 then return "slide"
+  if item.owner == other.owner then return nil
+  elseif other.layer == 0 then return "slide"
   else return "cross"
   end
 end
@@ -31,20 +33,18 @@ function Player:new(x,y,acceleration,maxSpeed)
   self.isPlayer=true
   self.flip=false -- false == right; true == left
   self.location = nil
+  self.acc = acceleration
+  self.maxSpd = maxSpeed
   
   --walk-box collision
-  self.walkBox = {layer=0, x=self.x, y=self.y, w=walkBoxW, h=walkBoxH} --layer0 -> walls, obstacles, 'walk thought physics'
+  self.walkBox = {layer=0, owner=self, x=self.x, y=self.y, w=walkBoxW, h=walkBoxH} --layer0 -> walls, obstacles, 'walk thought physics'
   World:add(self.walkBox, self.walkBox.x, self.walkBox.y, self.walkBox.w, self.walkBox.h)
 
   --hurt-box collision
-  self.hurtBox = {layer=1, x=self.x, y=self.y, w=hurtBoxW, h=hurtBoxH,} --layer1 -> hurt detections
-  World:add(self.hurtBox, self.hurtBox.x, self.hurtBox.y, self.hurtBox.w, self.hurtBox.h)
-
+  self.hurtBox = {layer=1, owner=self, x=self.x, y=self.y, w=hurtBoxW, h=hurtBoxH,} --layer1 -> hurt detections
+  World:add(self.hurtBox, self.hurtBox.x, self.hurtBox.y-self.hurtBox.h, self.hurtBox.w, self.hurtBox.h)
 
   --atk-box collision
-
-  self.acc = acceleration
-  self.maxSpd = maxSpeed
 
   self.state = {
     idle = idleState("Assets/Player/Warrior_Idle.png"),
@@ -73,8 +73,11 @@ function Player:update(dt)
   local goalX, goalY = self.x + self.dx, self.y + self.dy
   local actualX, actualY, cols, len = World:move(self.walkBox, goalX, goalY, playerCollisionFilter)
   self.x, self.y = actualX, actualY
-  -- World:update(self.hurtBox,self.x,self.y)
-  
+
+  local hurtBoxX = self.x - (walkBoxW - hurtBoxW) / 2 
+  local hurtBoxY = self.y - self.hurtBox.h
+  World:update(self.hurtBox, hurtBoxX, hurtBoxY)
+
   -- self.x = self.x + self.dx
   -- self.y = self.y + self.dy
 
@@ -82,8 +85,6 @@ end
 
 function Player:draw()
   self.currentState:draw(self)
-  love.graphics.rectangle("line", self.x, self.y, walkBoxW, walkBoxH)
-  love.graphics.rectangle("line", self.x, self.y, hurtBoxW, hurtBoxH)
 
 
 end
