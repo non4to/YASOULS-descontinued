@@ -14,14 +14,8 @@ local spriteHeight = 192
 local spriteWidth = 192
 
 local walkBoxW = 45
-local walkBoxH = 10
-local walkboxOffsetW = 20
-local walkboxOffsetH = 10
-
-
-
-local hurtBoxWOffset = 5
-local hurtBoxW = walkBoxW
+local walkBoxH = 20
+local hurtBoxW = walkBoxW/2
 local hurtBoxH = 40
 
 local playerCollisionFilter = function(item, other)
@@ -45,8 +39,8 @@ function Player:new(x,y,acceleration,maxSpeed)
   World:add(self.walkBox, self.walkBox.x, self.walkBox.y, self.walkBox.w, self.walkBox.h)
 
   --hurt-box collision
-  -- self.hurtBox = {layer=1, owner=self, x=self.x, y=self.y, w=hurtBoxW, h=hurtBoxH,} --layer1 -> hurt detections
-  -- World:add(self.hurtBox, self.hurtBox.x, self.hurtBox.y-self.hurtBox.h, self.hurtBox.w, self.hurtBox.h)
+  self.hurtBox = {layer=1, owner=self, x=x, y=y, w=hurtBoxW, h=hurtBoxH,} --layer1 -> hurt detections
+  World:add(self.hurtBox, self.hurtBox.x, self.hurtBox.y, self.hurtBox.w, self.hurtBox.h)
 
   --atk-box collision
 
@@ -77,11 +71,7 @@ function Player:update(dt)
   local goalX = self.walkBox.x + (self.dx * dt * FPScale)
   local goalY = self.walkBox.y + (self.dy * dt * FPScale)
   local actualX, actualY, cols, len = World:move(self.walkBox, goalX, goalY, playerCollisionFilter)
-  self.walkBox.x = actualX
-  self.walkBox.y = actualY
-  self.x = self.walkBox.x
-  -- self.y = self.walkBox.y
-
+  self:update_all_boxes(actualX,actualY)
 
 end
 
@@ -122,5 +112,10 @@ end
 
 function Player:on_key_pressed(key)
     self.currentState:on_key_pressed(self, key)
+end
+
+function Player:update_all_boxes(newX,newY)
+  self.walkBox.x, self.walkBox.y  = newX, newY
+  World:update(self.hurtBox, newX, newY)
 end
 
