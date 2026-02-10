@@ -40,7 +40,7 @@ function BaseState:draw(p)
         scaleX = -1
         offsetX = offsetX + spriteWidth
     end
-    love.graphics.draw(self.SS, sprite, p.x + offsetX, p.y + offsetY, 0, scaleX, 1)
+    love.graphics.draw(self.SS, sprite, p.walkBox.x, p.walkBox.y, 0, scaleX, 1)
 end
 
 function BaseState:createSprites()

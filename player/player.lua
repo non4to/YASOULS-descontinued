@@ -12,8 +12,14 @@ Player = Classic:extend()
 
 local spriteHeight = 192 
 local spriteWidth = 192
-local walkBoxW = 40
-local walkBoxH = 20
+
+local walkBoxW = 45
+local walkBoxH = 10
+local walkboxOffsetW = 20
+local walkboxOffsetH = 10
+
+
+
 local hurtBoxWOffset = 5
 local hurtBoxW = walkBoxW
 local hurtBoxH = 40
@@ -25,9 +31,7 @@ local playerCollisionFilter = function(item, other)
   end
 end
 
-function Player:new(x,y,acceleration,maxSpeed)
-  self.x = x
-  self.y = y
+function Player:new(x,y,acceleration,maxSpeed)  
   self.dx = 0
   self.dy = 0
   self.isPlayer=true
@@ -37,12 +41,12 @@ function Player:new(x,y,acceleration,maxSpeed)
   self.maxSpd = maxSpeed
   
   --walk-box collision
-  self.walkBox = {layer=0, owner=self, x=self.x, y=self.y, w=walkBoxW, h=walkBoxH} --layer0 -> walls, obstacles, 'walk thought physics'
+  self.walkBox = {layer=0, owner=self, x=x, y=y, w=walkBoxW, h=walkBoxH} --layer0 -> walls, obstacles, 'walk thought physics'
   World:add(self.walkBox, self.walkBox.x, self.walkBox.y, self.walkBox.w, self.walkBox.h)
 
   --hurt-box collision
-  self.hurtBox = {layer=1, owner=self, x=self.x, y=self.y, w=hurtBoxW, h=hurtBoxH,} --layer1 -> hurt detections
-  World:add(self.hurtBox, self.hurtBox.x, self.hurtBox.y-self.hurtBox.h, self.hurtBox.w, self.hurtBox.h)
+  -- self.hurtBox = {layer=1, owner=self, x=self.x, y=self.y, w=hurtBoxW, h=hurtBoxH,} --layer1 -> hurt detections
+  -- World:add(self.hurtBox, self.hurtBox.x, self.hurtBox.y-self.hurtBox.h, self.hurtBox.w, self.hurtBox.h)
 
   --atk-box collision
 
@@ -64,29 +68,30 @@ end
 function Player:update(dt)
   self.currentState:update(self, dt)
 
-  self.dx = self.dx * FRICTION
-  self.dy = self.dy * FRICTION
+  self.dx = self.dx * (FRICTION^(dt * FPScale)) 
+  self.dy = self.dy * (FRICTION^(dt * FPScale)) 
 
   self.dx = math.clamp(self.dx, -self.maxSpd, self.maxSpd)
   self.dy = math.clamp(self.dy, -self.maxSpd, self.maxSpd)
 
-  local goalX, goalY = self.x + self.dx, self.y + self.dy
+  local goalX = self.walkBox.x + (self.dx * dt * FPScale)
+  local goalY = self.walkBox.y + (self.dy * dt * FPScale)
   local actualX, actualY, cols, len = World:move(self.walkBox, goalX, goalY, playerCollisionFilter)
-  self.x, self.y = actualX, actualY
+  self.walkBox.x = actualX
+  self.walkBox.y = actualY
+  self.x = self.walkBox.x
+  -- self.y = self.walkBox.y
 
-  local hurtBoxX = self.x - (walkBoxW - hurtBoxW) / 2 
-  local hurtBoxY = self.y - self.hurtBox.h
-  World:update(self.hurtBox, hurtBoxX, hurtBoxY)
-
-  -- self.x = self.x + self.dx
-  -- self.y = self.y + self.dy
 
 end
 
 function Player:draw()
   self.currentState:draw(self)
 
-
+  -- Debug: drawStuff
+  
+  -- love.graphics.setColor(0, 1, 1) -- vermelho
+  -- love.graphics.setColor(1, 1, 1) -- volta pro branco
 end
 
 function Player:set_state(newState)

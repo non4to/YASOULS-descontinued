@@ -19,6 +19,7 @@ local playerMaxSpeed = 5
 -----------------------------------------------------------------------------
 function love.load()
   FRICTION = 0.8
+  FPScale = 60
   
   ATK_KEY = "z"
   GUARD_KEY = "x"
@@ -30,7 +31,6 @@ function love.load()
   R1 = {layer=0, x=300,y=300,w=50,h=50}
   World:add(R1,R1.x,R1.y,R1.w,R1.h)
 
-
 end
 -----------------------------------------------------------------------------
 function love.update(dt)
@@ -39,8 +39,10 @@ end
 -----------------------------------------------------------------------------
 function love.draw()
   push:start()
-
-
+--gray background
+  love.graphics.setColor(0.7, 0.7, 0.7)
+  love.graphics.rectangle("fill", 0, 0, gameWidth, gameHeight)
+  love.graphics.setColor(1, 1, 1) -- Volta para branco
   
   player:draw()
 
