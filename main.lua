@@ -35,6 +35,7 @@ end
 -----------------------------------------------------------------------------
 function love.update(dt)
   player:update(dt)
+  print(player.currentState.name)
 end
 -----------------------------------------------------------------------------
 function love.draw()
@@ -54,9 +55,24 @@ function love.draw()
   local items = World:getItems()
   for _, item in ipairs(items) do
     local x, y, w, h = World:getRect(item)
-    love.graphics.rectangle("line", x, y, w, h)
+    if item.layer==0 then 
+      love.graphics.setColor(1, 1, 1) -- white for walking collision
+    elseif item.layer == 1 then
+      love.graphics.setColor(1, 0, 0) -- red for take dmg collision
+    elseif item.layer == 2 then
+      love.graphics.setColor(0, 1, 0) -- green for deal dmg collision
+    end
+    if item.active then
+      love.graphics.rectangle("line", x, y, w, h)
+    end
+    love.graphics.setColor(1, 1, 1) 
+
   end
   ------------
+  love.graphics.setColor(0, 0, 1)
+  love.graphics.rectangle("line", 0, 0, player.x, player.y)
+  love.graphics.setColor(1, 1, 1) 
+
   -------------
   push:finish()
 end

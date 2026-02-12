@@ -9,6 +9,11 @@ function guardState:new(spriteSheetPath)
     guardState.super.new(self, "guard", spriteSheetPath, 6)
 end
 
+function guardState:init(p)
+    -- guardState.super.init(p)
+    p.comboReady = false
+end
+
 function guardState:update(p, dt)
     guardState.super.update(self, p,dt, animationCycleInterval)
     local axis = p:get_axis_inputs()

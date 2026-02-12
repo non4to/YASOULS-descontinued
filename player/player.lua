@@ -12,11 +12,26 @@ Player = Classic:extend()
 
 local spriteHeight = 192 
 local spriteWidth = 192
-
+--player ancor:
+local offsetX = spriteWidth/2   
+local offsetY = spriteHeight/2
+--offsets for hitboxes
+----walkbox
 local walkBoxW = 45
-local walkBoxH = 20
-local hurtBoxW = walkBoxW/2
-local hurtBoxH = 40
+local walkBoxH = 15
+local walkboxOffsetX = 25
+local walkboxOffsetY = 25
+----takedmg hitbox
+local hurtBoxW = 30
+local hurtBoxH = 45
+local hurtBoxOffsetX = 15
+local hurtBoxOffsetY = 5
+----atk1 hitbox
+local atkBoxW = 55
+local atkBoxH = 90
+local atkBoxOffsetX = 20
+local atkBoxOffsetY = 40
+local flipOffset = offsetX
 
 local playerCollisionFilter = function(item, other)
   if item.owner == other.owner then return nil
@@ -26,6 +41,8 @@ local playerCollisionFilter = function(item, other)
 end
 
 function Player:new(x,y,acceleration,maxSpeed)  
+  self.x = x
+  self.y = y
   self.dx = 0
   self.dy = 0
   self.isPlayer=true
@@ -35,14 +52,16 @@ function Player:new(x,y,acceleration,maxSpeed)
   self.maxSpd = maxSpeed
   
   --walk-box collision
-  self.walkBox = {layer=0, owner=self, x=x, y=y, w=walkBoxW, h=walkBoxH} --layer0 -> walls, obstacles, 'walk thought physics'
+  self.walkBox = {layer=0, owner=self, active=true, x=x-walkboxOffsetX, y=y+walkboxOffsetY, w=walkBoxW, h=walkBoxH} --layer0 -> walls, obstacles, 'walk thought physics'
   World:add(self.walkBox, self.walkBox.x, self.walkBox.y, self.walkBox.w, self.walkBox.h)
 
   --hurt-box collision
-  self.hurtBox = {layer=1, owner=self, x=x, y=y, w=hurtBoxW, h=hurtBoxH,} --layer1 -> hurt detections
+  self.hurtBox = {layer=1, owner=self, active=true, x=x-hurtBoxOffsetX, y=y-hurtBoxOffsetY, w=hurtBoxW, h=hurtBoxH,} --layer1 -> hurt detections
   World:add(self.hurtBox, self.hurtBox.x, self.hurtBox.y, self.hurtBox.w, self.hurtBox.h)
 
-  --atk-box collision
+  --atk1-box collision
+  self.atkBox = {layer=2, owner=self, active=false, x=x+atkBoxOffsetX, y=y-atkBoxOffsetY, w=atkBoxW, h=atkBoxH,} --layer2 -> atk detections
+  World:add(self.atkBox, self.atkBox.x, self.atkBox.y, self.atkBox.w, self.atkBox.h)
 
   self.state = {
     idle = idleState("Assets/Player/Warrior_Idle.png"),
@@ -71,8 +90,7 @@ function Player:update(dt)
   local goalX = self.walkBox.x + (self.dx * dt * FPScale)
   local goalY = self.walkBox.y + (self.dy * dt * FPScale)
   local actualX, actualY, cols, len = World:move(self.walkBox, goalX, goalY, playerCollisionFilter)
-  self:update_all_boxes(actualX,actualY)
-
+  self:update_all_positions(actualX,actualY)
 end
 
 function Player:draw()
@@ -85,9 +103,9 @@ function Player:draw()
 end
 
 function Player:set_state(newState)
+  self.atkBox.active = false
   self.lastState = self.currentState
   self.currentState = newState
-  self.comboReady = false
   self.currentState:init(self)
 end
 
@@ -114,8 +132,16 @@ function Player:on_key_pressed(key)
     self.currentState:on_key_pressed(self, key)
 end
 
-function Player:update_all_boxes(newX,newY)
+function Player:update_all_positions(newX,newY)
   self.walkBox.x, self.walkBox.y  = newX, newY
-  World:update(self.hurtBox, newX, newY)
+  self.x, self.y = newX + walkboxOffsetX, newY - walkboxOffsetY
+  World:update(self.hurtBox, self.x - hurtBoxOffsetX, self.y - hurtBoxOffsetY)
+  
+  local atkposX = self.x + atkBoxOffsetX
+  local atkposY = self.y - atkBoxOffsetY
+  if self.flip then
+    atkposX = atkposX - offsetX
+  end
+  World:update(self.atkBox, atkposX, atkposY)
 end
 

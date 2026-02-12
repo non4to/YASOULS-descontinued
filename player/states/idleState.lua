@@ -8,6 +8,11 @@ function idleState:new(spriteSheetPath)
     idleState.super.new(self, "idle", spriteSheetPath, 8)
 end
 
+function idleState:init(p)
+    -- idleState.super.init(p)
+    p.comboReady = false
+end
+
 function idleState:update(p,dt)
     idleState.super.update(self,p,dt,animationCycleInterval)
 

@@ -3,8 +3,9 @@ Classic = require("external.classic")
 
 local spriteHeight = 192 
 local spriteWidth = 192
-local walkboxOffsetW = 72
-local walkboxOffsetH = 120
+local offsetX = spriteWidth/2
+local offsetY = spriteHeight/2
+
 local spritesheetCount = 8
 local spriteSheetOffset = 0
 
@@ -34,13 +35,13 @@ function BaseState:draw(p)
     local cFrame = math.floor(self.currentFrame)
     local sprite = self.animation[cFrame]
     local scaleX = 1
-    local offsetX = -walkboxOffsetW
-    local offsetY = -walkboxOffsetH
+    local offsetX = -offsetX
+    local offsetY = -offsetY
     if p.flip then
         scaleX = -1
-        offsetX = offsetX + spriteWidth - 3
+        offsetX = offsetX + spriteWidth
     end
-    love.graphics.draw(self.SS, sprite, p.walkBox.x + offsetX, p.walkBox.y + offsetY, 0, scaleX, 1)
+    love.graphics.draw(self.SS, sprite, p.x + offsetX, p.y + offsetY, 0, scaleX, 1)
 end
 
 function BaseState:createSprites()

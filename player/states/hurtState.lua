@@ -8,6 +8,11 @@ function hurtState:new(spriteSheetPath)
     hurtState.super.new(self, "hurt", spriteSheetPath, 4)
 end
 
+function hurtState:init(p)
+    hurtState.super.init(p)
+    p.comboReady = false
+end
+
 function hurtState:update(p,dt)
     hurtState.super.update(self,p,dt,animationCycleInterval)
     

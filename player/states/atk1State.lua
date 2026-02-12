@@ -9,12 +9,17 @@ function atk1State:new(spriteSheetPath)
     atk1State.super.new(self, "atk1", spriteSheetPath, 4)
 end
 
+function atk1State:init(p)
+    -- atk1State.super.init(p)
+    p.atkBox.active = true
+end
+
 function atk1State:update(p, dt)
     atk1State.super.update(self, p,dt, animationCycleInterval)
     local axis = p:get_axis_inputs()
     p.dx = p.dx + p.acc * axis[1] * 0.15
     p.dy = p.dy + p.acc * axis[2] * 0.15
-    if self.currentFrame > #self.animation then
+    if self.currentFrame > #self.animation + 1 then
         if love.keyboard.isDown(GUARD_KEY) then
             p:set_state(p.state.guard)
         elseif p.comboReady then

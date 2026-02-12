@@ -8,6 +8,11 @@ function runState:new(spriteSheetPath)
     runState.super.new(self, "run", spriteSheetPath, 6)
 end
 
+function runState:init(p)
+    -- runState.super.init(p)
+    p.comboReady = false
+end
+
 function runState:update(p, dt)
     runState.super.update(self, p,dt, animationCycleInterval)
 
