@@ -9,8 +9,7 @@ function idleState:new(spriteSheetPath)
 end
 
 function idleState:init(p)
-    -- idleState.super.init(p)
-    p.comboReady = false
+    idleState.super.init(self, p)
 end
 
 function idleState:update(p,dt)

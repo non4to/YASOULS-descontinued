@@ -9,8 +9,7 @@ function runState:new(spriteSheetPath)
 end
 
 function runState:init(p)
-    -- runState.super.init(p)
-    p.comboReady = false
+    runState.super.init(self, p)
 end
 
 function runState:update(p, dt)

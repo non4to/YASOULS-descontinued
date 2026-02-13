@@ -9,17 +9,16 @@ function hurtState:new(spriteSheetPath)
 end
 
 function hurtState:init(p)
-    hurtState.super.init(p)
-    p.comboReady = false
+    hurtState.super.init(self, p)
 end
 
-function hurtState:update(p,dt)
-    hurtState.super.update(self,p,dt,animationCycleInterval)
-    
+function hurtState:update(p,dt)    
     if self.currentFrame > #self.animation then
         p:set_state(p.state.idle)
     end
-
+    p.dx = p.dx + 3
+    
+    self.currentFrame = self.currentFrame + animationCycleInterval * dt
 end
 
 function hurtState:createSprites()

@@ -10,8 +10,8 @@ function guardState:new(spriteSheetPath)
 end
 
 function guardState:init(p)
-    -- guardState.super.init(p)
-    p.comboReady = false
+    guardState.super.init(self, p)
+    p.guardBox.active = true
 end
 
 function guardState:update(p, dt)

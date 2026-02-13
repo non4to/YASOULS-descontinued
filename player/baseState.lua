@@ -22,11 +22,12 @@ end
 
 function BaseState:init(p)
     self.currentFrame = 1
+    p.comboReady = false
 end
 
 function BaseState:update(p, dt, animationCycleInterval)
     self.currentFrame = self.currentFrame + animationCycleInterval * dt
-    if self.currentFrame > #self.animation + 1 then
+    if self.currentFrame > #self.animation then
         self.currentFrame = 1
     end
 end
