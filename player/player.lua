@@ -47,8 +47,29 @@ local STAMINA = 100
 
 local walkCollisionFilter = function(item, other)
   if item.owner == other.owner then return nil
-  elseif other.layer == 0 then return "slide"
+  elseif other.layer == LAYER.SOLID then return "slide"
   else return "cross"
+  end
+end
+
+local takeDmgCollisionFilter = function(item, other)
+  if item.owner == other.owner then return nil
+  elseif other.layer == LAYER.ATKBOX then return "cross"
+  else return nil
+  end
+end
+
+local dealDmgCollisionFilter = function(item, other)
+  if item.owner == other.owner then return nil
+  elseif other.layer == LAYER.HURTBOX then return "cross"
+  else return nil
+  end
+end
+
+local guardCollisionFilter = function(item, other)
+  if item.owner == other.owner then return nil
+  elseif other.layer == LAYER.ATKBOX then return "cross"
+  else return nil
   end
 end
 
@@ -66,19 +87,19 @@ function Player:new(x,y,acceleration,maxSpeed)
   self.maxSpd = maxSpeed
   
   --walk-box collision
-  self.walkBox = {layer=0, owner=self, active=true, x=x-walkBoxOffsetX, y=y+walkBoxOffsetY, w=walkBoxW, h=walkBoxH} --layer0 -> walls, obstacles, 'walk thought physics'
+  self.walkBox = {layer=LAYER.SOLID, owner=self, active=true, x=x-walkBoxOffsetX, y=y+walkBoxOffsetY, w=walkBoxW, h=walkBoxH} --layer0 -> walls, obstacles, 'walk thought physics'
   World:add(self.walkBox, self.walkBox.x, self.walkBox.y, self.walkBox.w, self.walkBox.h)
 
   --hurt-box collision
-  self.hurtBox = {layer=1, owner=self, active=true, x=x-hurtBoxOffsetX, y=y-hurtBoxOffsetY, w=hurtBoxW, h=hurtBoxH,} --layer1 -> hurt detections
+  self.hurtBox = {layer=LAYER.HURTBOX, owner=self, active=true, x=x-hurtBoxOffsetX, y=y-hurtBoxOffsetY, w=hurtBoxW, h=hurtBoxH,} --layer1 -> hurt detections
   World:add(self.hurtBox, self.hurtBox.x, self.hurtBox.y, self.hurtBox.w, self.hurtBox.h)
 
   --atk-box collision
-  self.atkBox = {layer=2, owner=self, active=false, x=x+atkBoxOffsetX, y=y-atkBoxOffsetY, w=atkBoxW, h=atkBoxH,} --layer2 -> atk detections
+  self.atkBox = {layer=LAYER.ATKBOX, owner=self, active=false, x=x+atkBoxOffsetX, y=y-atkBoxOffsetY, w=atkBoxW, h=atkBoxH, targetTable={}} --layer2 -> atk detections
   World:add(self.atkBox, self.atkBox.x, self.atkBox.y, self.atkBox.w, self.atkBox.h)
 
   --guard-box collision
-  self.guardBox = {layer=3, owner=self, active=false, x=x-guardBoxOffsetX, y=y-guardBoxOffsetY, w=guardBoxW, h=guardBoxH,} --layer3 -> block detections
+  self.guardBox = {layer=LAYER.GUARDBOX, owner=self, active=false, x=x-guardBoxOffsetX, y=y-guardBoxOffsetY, w=guardBoxW, h=guardBoxH, targetTable={}} --layer3 -> block detections
   World:add(self.guardBox, self.guardBox.x, self.guardBox.y, self.guardBox.w, self.guardBox.h)
 
 
@@ -103,11 +124,76 @@ function Player:update(dt)
   self.dx = math.clamp(self.dx, -self.maxSpd, self.maxSpd)
   self.dy = math.clamp(self.dy, -self.maxSpd, self.maxSpd)
 
+  --moving box
   local goalX = self.walkBox.x + (self.dx * dt * FPScale)
   local goalY = self.walkBox.y + (self.dy * dt * FPScale)
   local actualX, actualY, cols, len = World:move(self.walkBox, goalX, goalY, walkCollisionFilter)
-  self:update_all_positions(actualX,actualY)
-  self:check_hurt_collisions()
+  self.walkBox.x, self.walkBox.y = actualX, actualY
+  self.x, self.y = actualX + walkBoxOffsetX, actualY - walkBoxOffsetY
+
+  --hurt box
+  local hurtboxGoalX = self.x - hurtBoxOffsetX
+  local hurtboxGoalY = self.y - hurtBoxOffsetY
+  local hBoxActualX, hBoxActualY, cols, len = World:move(self.hurtBox, hurtboxGoalX, hurtboxGoalY, takeDmgCollisionFilter)
+  self.hurtBox.x, self.hurtBox.y = hBoxActualX, hBoxActualY
+  for i=1, len do
+    local other = cols[i].other
+    if other.layer==LAYER.ATKBOX then
+      if not tableContains(self.guardBox.targetTable, other.owner) then
+        --only gets hit if its not blocking
+        self:set_state(self.state.hurt)
+      end
+    end
+  end
+
+  --atk box
+  if self.atkBox.active then
+    --player is atking
+    local atkboxGoalX = self.x + atkBoxOffsetX
+    if self.flip then
+        atkboxGoalX = atkboxGoalX - atkFlipOffset
+    end
+    local atkboxGoalY = self.y - atkBoxOffsetY
+    local atkBoxActualX, atkBoxActualY, cols, len = World:move(self.atkBox, atkboxGoalX, atkboxGoalY, dealDmgCollisionFilter)
+
+    for i=1, len do
+      local other = cols[i].other
+      if other.layer==LAYER.HURTBOX then
+        if not tableContains(self.atkBox.targetTable, other.owner) then
+          table.insert(self.atkBox.targetTable, other.owner)
+          COUNTER = COUNTER + 1
+          print(COUNTER) --play hit sound
+        end
+      end
+    end
+  end
+
+  --guard box
+  if self.guardBox.active then
+    --player is guarding
+    local guardboxGoalX = self.x - guardBoxOffsetX
+    if self.flip then
+        guardboxGoalX = guardboxGoalX + guardFlipOffset
+    end
+    local guardboxGoalY = self.y - guardBoxOffsetY
+    local guardBoxActualX, guardBoxActualY, cols, len = World:move(self.guardBox, guardboxGoalX, guardboxGoalY, guardCollisionFilter)
+
+    for i=1, len do
+      local other = cols[i].other
+      if other.layer==LAYER.ATKBOX then
+        if not tableContains(self.guardBox.targetTable, other.owner) then
+          table.insert(self.guardBox.targetTable, other.owner)
+        end
+        COUNTER = COUNTER + 1
+        print(COUNTER) --play block sound
+      end
+    end
+  end
+
+
+
+  -- self:update_all_positions(actualX,actualY)
+  -- self:check_hurt_collisions()
 
 
 end
@@ -123,8 +209,14 @@ end
 
 function Player:set_state(newState)
   self.atkBox.active = false
+  self.atkBox.targetTable = {}
+
   self.guardBox.active = false
+  self.guardBox.targetTable = {}
+
   self.hurtBox.active = true 
+
+
   self.lastState = self.currentState
   self.currentState = newState
   self.currentState:init(self)
@@ -173,21 +265,21 @@ function Player:update_all_positions(newX,newY)
 
   World:update(self.atkBox, atkposX, atkposY)
   World:update(self.guardBox, guardposX, guardposY)
-  World:update(self.hurtBox, hurtposX, hurtposY )
+  World:update(self.hurtBox, hurtposX, hurtposY)
 
 end
 
-function Player:check_hurt_collisions()
-  local items, len = World:queryRect(self.hurtBox.x, self.hurtBox.y, self.hurtBox.w, self.hurtBox.h)
-  for i=1,len do
-    local other = items[i]
-    print("Item " .. i .. " - layer: " .. tostring(other.layer)) -- E ISSO
-    if (other.owner ~= self) and (other.layer==2) then
-      self:set_state(self.state.hurt)
-      print("OUCH!")
-    end
-  end
+-- function Player:check_hurt_collisions()
+--   local items, len = World:queryRect(self.hurtBox.x, self.hurtBox.y, self.hurtBox.w, self.hurtBox.h)
+--   for i=1,len do
+--     local other = items[i]
+--     print(other.name)
+--     if (other.owner ~= self) and (other.layer==) and (other.active) then
+--       self:set_state(self.state.hurt)
+--       print("OUCH!")
+--     end
+--   end
   
 
-end
+-- end
 

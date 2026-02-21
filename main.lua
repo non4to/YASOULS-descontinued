@@ -18,6 +18,15 @@ local playerMaxSpeed = 5
 
 -----------------------------------------------------------------------------
 function love.load()
+  LAYER = {
+    SOLID = 0,
+    HURTBOX = 1,
+    ATKBOX = 2,
+    GUARDBOX = 3 
+  }
+
+  COUNTER = 0
+
   FRICTION = 0.8
   FPScale = 60
   
@@ -28,9 +37,13 @@ function love.load()
   World = Bump.newWorld()
   player = Player(100, 100, playerAcceleration, playerMaxSpeed)
   
-  fakeEnemy = {hp=100, isPlayer=false}
-  R1 = {layer=2, owner=fakeEnemy, active=true, x=300,y=300,w=50,h=50}
+  fakeEnemy = {hp=100}
+  R1 = {name="ret", layer=LAYER.ATKBOX, owner=fakeEnemy, active=true, x=300,y=400,w=50,h=50}
+  R2 = {name="ret2", layer=LAYER.HURTBOX, owner=fakeEnemy, active=true, x=300,y=100,w=50,h=50}
+
+  
   World:add(R1,R1.x,R1.y,R1.w,R1.h)
+  World:add(R2,R2.x,R2.y,R2.w,R2.h)
 
 end
 -----------------------------------------------------------------------------
@@ -57,14 +70,15 @@ function love.draw()
   local items = World:getItems()
   for _, item in ipairs(items) do
     local x, y, w, h = World:getRect(item)
-    if item.layer==0 then 
+    love.graphics.setColor(1, 1, 0 ) -- yellow for everything else
+    if item.layer==LAYER.SOLID then 
       love.graphics.setColor(1, 1, 1) -- white for walking collision
-    elseif item.layer == 1 then
+    elseif item.layer == LAYER.HURTBOX then
       love.graphics.setColor(1, 0, 0) -- red for take dmg collision
-    elseif item.layer == 2 then
+    elseif item.layer == LAYER.ATKBOX then
       love.graphics.setColor(0, 1, 0) -- green for deal dmg collision
-    elseif item.layer == 3 then
-      love.graphics.setColor(1, 0, 1) -- purple for deal dmg collision
+    elseif item.layer == LAYER.GUARDBOX then
+      love.graphics.setColor(1, 0, 1) -- purple for block collision
     end
     if item.active then
       love.graphics.rectangle("line", x, y, w, h)

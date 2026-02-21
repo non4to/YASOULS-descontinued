@@ -11,3 +11,10 @@ end
 function math.clamp(value, min, max)
     return math.max(min, math.min(value, max))
 end
+
+function tableContains(t, value)
+  for _, v in ipairs(t) do
+    if v == value then return true end
+  end
+  return false
+end
