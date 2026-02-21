@@ -1,5 +1,7 @@
 --requirements and setups
 require("player.player")
+-- require("enemies.baseEnemy")
+require("enemies.blackknight.blackknight")
 require("tools")
 Bump = require("external.bump")
 
@@ -12,8 +14,8 @@ local gbaScaleX, gbaScaleY = gameWidth/240, gameHeight/160
 windowWidth, windowHeight = windowWidth*windowScale, windowHeight*windowScale --make the window a bit smaller than the screen itself
 push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {fullscreen = false})
 
-local playerAcceleration = 1--0.5
-local playerMaxSpeed = 5
+local playerAcceleration = 0.5
+local playerMaxSpeed = 3
 ----------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------
@@ -33,16 +35,17 @@ function love.load()
   TEST_KEY="d"
 
   World = Bump.newWorld()
-  player = Player(100, 100, playerAcceleration, playerMaxSpeed)
+  player = Player(50, 50, playerAcceleration, playerMaxSpeed)
+  bk = BlackKnight(150,150, playerAcceleration, playerMaxSpeed)
   
   COUNTER = 0
   fakeEnemy = {hp=100}
-  R1 = {name="ret", layer=LAYER.ATKBOX, owner=fakeEnemy, active=true, x=300,y=400,w=50,h=50}
-  R2 = {name="ret2", layer=LAYER.HURTBOX, owner=fakeEnemy, active=true, x=300,y=100,w=50,h=50}
+  -- R1 = {name="ret", layer=LAYER.ATKBOX, owner=fakeEnemy, active=true, x=300,y=400,w=50,h=50}
+  -- R2 = {name="ret2", layer=LAYER.HURTBOX, owner=fakeEnemy, active=true, x=300,y=100,w=50,h=50}
 
   
-  World:add(R1,R1.x,R1.y,R1.w,R1.h)
-  World:add(R2,R2.x,R2.y,R2.w,R2.h)
+  -- World:add(R1,R1.x,R1.y,R1.w,R1.h)
+  -- World:add(R2,R2.x,R2.y,R2.w,R2.h)
 
   --sounds
   SOUND ={
@@ -57,6 +60,7 @@ end
 -----------------------------------------------------------------------------
 function love.update(dt)
   player:update(dt)
+  bk:update(dt)
   -- print(player.currentState.name)
 end
 -----------------------------------------------------------------------------
@@ -69,9 +73,7 @@ function love.draw()
 --------------------------------------------
   
   player:draw()
-
-
-
+  bk:draw()
   
   ------------
   --DRAW ALL BUMP STUFF
@@ -95,9 +97,9 @@ function love.draw()
 
   end
   ------------
-  love.graphics.setColor(0, 0, 1)
-  love.graphics.rectangle("line", 0, 0, player.x, player.y)
-  love.graphics.setColor(1, 1, 1) 
+  -- love.graphics.setColor(0, 0, 1)
+  -- love.graphics.rectangle("line", 0, 0, player.x, player.y)
+  -- love.graphics.setColor(1, 1, 1) 
 
   -------------
   push:finish()

@@ -8,15 +8,16 @@ function hurtState:new(spriteSheetPath)
     hurtState.super.new(self, "hurt", spriteSheetPath, 4)
 end
 
-function hurtState:init(p)
+function hurtState:init(p, knockbackDir)
     hurtState.super.init(self, p)
+    p.dx = knockbackDir * 1.2
+
 end
 
 function hurtState:update(p,dt)    
     if self.currentFrame > #self.animation then
         p:set_state(p.state.idle)
     end
-    p.dx = p.dx + 3
     
     self.currentFrame = self.currentFrame + animationCycleInterval * dt
 end

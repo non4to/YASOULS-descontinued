@@ -20,7 +20,7 @@ end
 
 function guardState:init(p)
     guardState.super.init(self, p)
-    p.guardBox.active = true
+    -- p.guardBox.active = true
 end
 
 function guardState:update(p, dt)
