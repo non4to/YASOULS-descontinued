@@ -25,8 +25,6 @@ function love.load()
     GUARDBOX = 3 
   }
 
-  COUNTER = 0
-
   FRICTION = 0.8
   FPScale = 60
   
@@ -37,6 +35,7 @@ function love.load()
   World = Bump.newWorld()
   player = Player(100, 100, playerAcceleration, playerMaxSpeed)
   
+  COUNTER = 0
   fakeEnemy = {hp=100}
   R1 = {name="ret", layer=LAYER.ATKBOX, owner=fakeEnemy, active=true, x=300,y=400,w=50,h=50}
   R2 = {name="ret2", layer=LAYER.HURTBOX, owner=fakeEnemy, active=true, x=300,y=100,w=50,h=50}
@@ -45,6 +44,15 @@ function love.load()
   World:add(R1,R1.x,R1.y,R1.w,R1.h)
   World:add(R2,R2.x,R2.y,R2.w,R2.h)
 
+  --sounds
+  SOUND ={
+    atk1 = love.audio.newSource("Assets/Sound/Sword Attacks Hits and Blocks/Sword Attack 2.ogg", "static"),
+    atk2 = love.audio.newSource("Assets/Sound/Sword Attacks Hits and Blocks/Sword_Attack_1.ogg", "static"),
+    hit1 = love.audio.newSource("Assets/Sound/Sword Attacks Hits and Blocks/Sword Impact Hit 1.ogg", "static"),
+    hit2 = love.audio.newSource("Assets/Sound/Sword Attacks Hits and Blocks/Sword Impact Hit 2.ogg", "static"),
+    hit3 = love.audio.newSource("Assets/Sound/Sword Attacks Hits and Blocks/Sword Impact Hit 3.ogg", "static"),
+
+  } 
 end
 -----------------------------------------------------------------------------
 function love.update(dt)

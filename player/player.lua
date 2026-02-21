@@ -161,6 +161,7 @@ function Player:update(dt)
       if other.layer==LAYER.HURTBOX then
         if not tableContains(self.atkBox.targetTable, other.owner) then
           table.insert(self.atkBox.targetTable, other.owner)
+          SOUND.hit1:play()
           COUNTER = COUNTER + 1
           print(COUNTER) --play hit sound
         end

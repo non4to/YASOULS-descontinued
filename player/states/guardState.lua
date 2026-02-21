@@ -4,6 +4,15 @@ require("player.baseState")
 local animationCycleInterval = 9
 
 guardState = BaseState:extend()
+-- apertar guard → guardState (parry window ativa)
+--     ├── ataque chega DENTRO da janela → parryState (counter window)
+--     │       └── jogador aperta ataque → contra-ataque especial
+--     └── ataque chega FORA da janela → guard normal (toma menos dano)
+-- parry window de 0.2s
+-- mecanica pra nao deixar spamar parry: 
+--  contar quantas vezes o parry foi apertado por um tempo x
+--  se foi apertado mais de Y vezes, diminuir a parry window pra 0.1
+--  se foi apertado mais de K vezes, considerar block sempre.
 
 function guardState:new(spriteSheetPath)
     guardState.super.new(self, "guard", spriteSheetPath, 6)

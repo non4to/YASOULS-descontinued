@@ -12,6 +12,8 @@ end
 function atk1State:init(p)
     atk1State.super.init(self, p)
     p.atkBox.active = true
+    SOUND.atk1:stop()
+    SOUND.atk1:play()
 end
 
 function atk1State:update(p, dt)
