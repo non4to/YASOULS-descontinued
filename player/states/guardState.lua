@@ -1,6 +1,5 @@
 -- guardState.lua
 require("player.baseState")
-
 local animationCycleInterval = 9
 
 guardState = BaseState:extend()
@@ -20,7 +19,8 @@ end
 
 function guardState:init(p)
     guardState.super.init(self, p)
-    -- p.guardBox.active = true
+    p.parryTimer = 0
+    p.parryWindowOpen = true
 end
 
 function guardState:update(p, dt)
@@ -28,6 +28,13 @@ function guardState:update(p, dt)
     local axis = p:get_axis_inputs()
     p.dx = p.dx + p.acc * axis[1] * 0.075
     p.dy = p.dy + p.acc * axis[2] * 0.075
+    p.parryTimer = p.parryTimer + dt
+
+    if p.parryTimer > PARRY_WINDOW then
+        p.parryWindowOpen = false
+    end
+
+
     if not love.keyboard.isDown(GUARD_KEY) then
         p:set_state(p.state.idle)
     end

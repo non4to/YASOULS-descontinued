@@ -163,7 +163,12 @@ function BlackKnight:update(dt)
           if other.owner.isPlayer then
             local isGuarding = other.owner.currentState.name == "guard"
             local backStab = self.flip == other.owner.flip
-            if isGuarding and not(backStab) then
+            if other.owner.parryWindowOpen then
+              print("PARRIED!")
+              SOUND.atk1:stop()
+              SOUND.atk1:stop()
+              SOUND.parry:play()
+            elseif isGuarding and not(backStab) then
               a=1 --funcao de bloquear
               print("BLOCK!")
             else

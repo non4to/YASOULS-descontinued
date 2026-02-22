@@ -115,6 +115,9 @@ function Player:new(x,y,acceleration,maxSpeed)
   self.currentState = self.state.idle
   self.lastState = self.state.idle
   self.comboReady = false
+  self.parryTimer = 0
+  self.parryWindowOpen = false
+
 end
 
 function Player:update(dt)
@@ -209,9 +212,7 @@ function Player:set_state(newState, ...)
   self.atkBox.active = false
   self.atkBox.targetTable = {}
 
-  -- self.guardBox.active = false
-  -- self.guardBox.targetTable = {}
-
+  self.parryWindowOpen = false
   self.hurtBox.active = true 
 
   self.lastState = self.currentState

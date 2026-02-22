@@ -10,12 +10,20 @@ end
 
 function bkatk1State:init(bk)
     bkatk1State.super.init(self, bk)
-    bk.atkBox.active = true
-    SOUND.atk1:stop()
-    SOUND.atk1:play()
 end
 
 function bkatk1State:update(bk, dt)
+    if self.currentFrame > 3 then
+        -- print(self.currentFrame)
+        SOUND.atk1:stop()
+        SOUND.atk1:play()
+
+        if not bk.atkBox.active then
+            bk.atkBox.active = true
+        end
+
+    end
+
     if self.currentFrame > #self.animation then
         bk:set_state(bk.state.idle)
     end
@@ -25,5 +33,5 @@ end
 function bkatk1State:createSprites()
     bkatk1State.super.createSprites(self)
     local quads = self.spritesQuad
-    self.animation = {quads[1], quads[2], quads[3], quads[4], quads[4]}
+    self.animation = {quads[1], quads[1], quads[1], quads[2], quads[3], quads[4], quads[4]}
 end
