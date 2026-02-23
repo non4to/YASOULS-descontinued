@@ -33,6 +33,6 @@ function idleState:on_key_pressed(p, key)
     elseif key == GUARD_KEY then
         p:set_state(p.state.guard)
     elseif key == TEST_KEY then
-        p:set_state(p.state.hurt)
+        p:set_state(p.state.hurt, 1)
     end
 end

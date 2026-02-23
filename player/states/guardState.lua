@@ -34,7 +34,6 @@ function guardState:update(p, dt)
         p.parryWindowOpen = false
     end
 
-
     if not love.keyboard.isDown(GUARD_KEY) then
         p:set_state(p.state.idle)
     end

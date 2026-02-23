@@ -6,6 +6,8 @@ require("player.states.atk1State")
 require("player.states.atk2State")
 require("player.states.guardState")
 require("player.states.hurtState")
+require("player.states.parryState")
+
 
 local Tools = require("tools")
 Player = Classic:extend()
@@ -110,6 +112,7 @@ function Player:new(x,y,acceleration,maxSpeed)
     atk2 = atk2State("Assets/Player/Warrior_Attack2.png"),
     guard = guardState("Assets/Player/Warrior_Guard.png"),
     hurt = hurtState("Assets/Player/Sprite-0001.png"),
+    parry = parryState("Assets/Player/Warrior_Parry.png"),
   }
 
   self.currentState = self.state.idle
@@ -240,7 +243,15 @@ function Player:get_axis_inputs()
 end
 
 function Player:take_damage(knockbackDir)
+  HITSTOP.active=true
+  HITSTOP.timer = HITSTOP_STANDARD.hit
   self:set_state(self.state.hurt, knockbackDir)
+end
+
+function Player:parry()
+  self:set_state(self.state.parry)
+  HITSTOP.active=true
+  HITSTOP.timer = HITSTOP_STANDARD.parry
 end
 
 function Player:on_key_pressed(key)

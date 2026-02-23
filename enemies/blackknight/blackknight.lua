@@ -5,6 +5,7 @@ require("enemies.blackknight.states.bk_atk1State")
 -- require("enemies.blackknight.states.bk_atk2State")
 -- require("enemies.blackknight.states.bk_guardState")
 require("enemies.blackknight.states.bk_hurtState")
+require("enemies.blackknight.states.bk_s_staggerState")
 require("enemies.baseEnemy")
 
 local Tools = require("tools")
@@ -103,6 +104,7 @@ function BlackKnight:new(x,y,acceleration,maxSpeed)
     -- atk2 = atk2State("Assets/Enemies/BlackKnight/BlackKnight_Attack2.png"),
     -- guard = guardState("Assets/Enemies/BlackKnight/BlackKnight_Guard.png"),
     hurt = bkhurtState("Assets/Enemies/BlackKnight/BlackKnight_Hurt.png"),
+    s_stagger = bks_staggerState("Assets/Enemies/BlackKnight/BlackKnight_Hurt.png")
   }
 
   self.currentState = self.state.idle
@@ -165,6 +167,8 @@ function BlackKnight:update(dt)
             local backStab = self.flip == other.owner.flip
             if other.owner.parryWindowOpen then
               print("PARRIED!")
+              other.owner:parry()
+              self:parried()
               SOUND.atk1:stop()
               SOUND.atk1:stop()
               SOUND.parry:play()
@@ -205,5 +209,11 @@ function BlackKnight:set_state(newState, ...)
 end
 
 function BlackKnight:take_damage(knockbackDir)
+  HITSTOP.active=true
+  HITSTOP.timer = HITSTOP_STANDARD.hit
   self:set_state(self.state.hurt, knockbackDir)
+end
+
+function BlackKnight:parried()
+  self:set_state(self.state.s_stagger)
 end

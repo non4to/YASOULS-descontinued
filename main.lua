@@ -14,8 +14,8 @@ local gbaScaleX, gbaScaleY = gameWidth/240, gameHeight/160
 windowWidth, windowHeight = windowWidth*windowScale, windowHeight*windowScale --make the window a bit smaller than the screen itself
 push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {fullscreen = false})
 
-local playerAcceleration = 0.5
-local playerMaxSpeed = 3
+local playerAcceleration = 1
+local playerMaxSpeed = 5
 ----------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------
@@ -27,9 +27,19 @@ function love.load()
     GUARDBOX = 3 
   }
 
+  HITSTOP = {
+    active = false,
+    timer = 0,
+  }
+
+  HITSTOP_STANDARD = {
+    parry = 5*(1/60),
+    hit = 5*(1/60),
+  }
+
   FRICTION = 0.8
   FPScale = 60
-  PARRY_WINDOW = 0.2
+  PARRY_WINDOW = 5
   
   ATK_KEY = "z"
   GUARD_KEY = "x"
@@ -61,6 +71,14 @@ function love.load()
 end
 -----------------------------------------------------------------------------
 function love.update(dt)
+  if HITSTOP.active then
+    HITSTOP.timer = HITSTOP.timer - dt
+    if HITSTOP.timer < 0 then
+      HITSTOP.active = false
+    end
+    return
+  end
+
   player:update(dt)
   bk:update(dt)
   -- print(player.currentState.name)
