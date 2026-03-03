@@ -15,7 +15,7 @@ BlackKnight = Enemy:extend()
 --sprite sizes
 local spriteHeight = 192 
 local spriteWidth = 192
---BlackKnight ancor:
+--player ancor:
 local offsetX = spriteWidth/2   
 local offsetY = spriteHeight/2
 
@@ -27,21 +27,21 @@ local walkBoxOffsetX = 25
 local walkBoxOffsetY = 25
 ----takedmg hitbox
 local hurtBoxW = 30
-local hurtBoxH = 45
+local hurtBoxH = 30--45
 local hurtBoxOffsetX = 15
-local hurtBoxOffsetY = 5
+local hurtBoxOffsetY = 15--5
 ----atk hitbox
-local atkBoxW = 55
-local atkBoxH = 90
+local atkBoxW = 50
+local atkBoxH = 30 --90
 local atkBoxOffsetX = 20
-local atkBoxOffsetY = 40
+local atkBoxOffsetY = 10--40
 local atkFlipOffset = atkBoxOffsetX * 2 + atkBoxW
-----guard hitbox
-local guardBoxW = 40
-local guardBoxH = 60
-local guardBoxOffsetX = 5
-local guardBoxOffsetY = 20
-local guardFlipOffset = guardBoxOffsetX - guardBoxW + 5
+-- ----guard hitbox
+-- local guardBoxW = 40
+-- local guardBoxH = 60
+-- local guardBoxOffsetX = 5
+-- local guardBoxOffsetY = 20
+-- local guardFlipOffset = guardBoxOffsetX - guardBoxW + 5
 
 --enemies atributes
 local HEALTHPOINTS = 100
@@ -104,7 +104,7 @@ function BlackKnight:new(x,y,acceleration,maxSpeed)
     -- atk2 = atk2State("Assets/Enemies/BlackKnight/BlackKnight_Attack2.png"),
     -- guard = guardState("Assets/Enemies/BlackKnight/BlackKnight_Guard.png"),
     hurt = bkhurtState("Assets/Enemies/BlackKnight/BlackKnight_Hurt.png"),
-    s_stagger = bks_staggerState("Assets/Enemies/BlackKnight/BlackKnight_Hurt.png")
+    s_stagger = bks_staggerState("Assets/Enemies/BlackKnight/BlackKnight_Stagger.png")
   }
 
   self.currentState = self.state.idle
@@ -121,8 +121,6 @@ function BlackKnight:update(dt)
     self.counter = 0
   end
 ----------------------------------------------
-
-
   self.dx = self.dx * (FRICTION^(dt * FPScale)) 
   self.dy = self.dy * (FRICTION^(dt * FPScale)) 
   self.dx = math.clamp(self.dx, -self.maxSpd, self.maxSpd)
@@ -167,13 +165,15 @@ function BlackKnight:update(dt)
             local backStab = self.flip == other.owner.flip
             if other.owner.parryWindowOpen then
               print("PARRIED!")
-              other.owner:parry()
-              self:parried()
               SOUND.atk1:stop()
               SOUND.atk1:stop()
               SOUND.parry:play()
+              other.owner:parry()
+              self:parried(dir)
+
             elseif isGuarding and not(backStab) then
-              a=1 --funcao de bloquear
+              SOUND.block:play()
+              self:blocked(dir)
               print("BLOCK!")
             else
               other.owner:take_damage(dir)
@@ -214,6 +214,14 @@ function BlackKnight:take_damage(knockbackDir)
   self:set_state(self.state.hurt, knockbackDir)
 end
 
-function BlackKnight:parried()
-  self:set_state(self.state.s_stagger)
+function BlackKnight:parried(knockbackDir)
+  HITSTOP.active=true
+  HITSTOP.timer = HITSTOP_STANDARD.parry
+  self:set_state(self.state.s_stagger,knockbackDir*-1)
+end
+
+function BlackKnight:blocked(knockbackDir)
+  HITSTOP.active=true
+  HITSTOP.timer = HITSTOP_STANDARD.block
+  self:set_state(self.state.s_stagger,knockbackDir*-1)
 end

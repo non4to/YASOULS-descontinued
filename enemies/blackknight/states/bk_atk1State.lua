@@ -13,7 +13,7 @@ function bkatk1State:init(bk)
 end
 
 function bkatk1State:update(bk, dt)
-    if self.currentFrame > 4 then
+    if self.currentFrame > 5 then
         -- print(self.currentFrame)
         SOUND.atk1:stop()
         SOUND.atk1:play()

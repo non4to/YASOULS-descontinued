@@ -15,7 +15,7 @@ windowWidth, windowHeight = windowWidth*windowScale, windowHeight*windowScale --
 push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {fullscreen = false})
 
 local playerAcceleration = 1
-local playerMaxSpeed = 5
+local playerMaxSpeed = 2
 ----------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------
@@ -35,11 +35,12 @@ function love.load()
   HITSTOP_STANDARD = {
     parry = 5*(1/60),
     hit = 5*(1/60),
+    block = 7*(1/60),
   }
 
   FRICTION = 0.8
   FPScale = 60
-  PARRY_WINDOW = 5
+  PARRY_WINDOW = 0.2
   
   ATK_KEY = "z"
   GUARD_KEY = "x"
@@ -48,7 +49,9 @@ function love.load()
   World = Bump.newWorld()
   player = Player(50, 50, playerAcceleration, playerMaxSpeed)
   bk = BlackKnight(150,150, playerAcceleration, playerMaxSpeed)
-  
+  bk2 = BlackKnight(150,300, playerAcceleration, playerMaxSpeed)
+
+
   COUNTER = 0
   fakeEnemy = {hp=100}
   -- R1 = {name="ret", layer=LAYER.ATKBOX, owner=fakeEnemy, active=true, x=300,y=400,w=50,h=50}
@@ -65,7 +68,8 @@ function love.load()
     hit1 = love.audio.newSource("Assets/Sound/Sword Attacks Hits and Blocks/Sword Impact Hit 1.ogg", "static"),
     hit2 = love.audio.newSource("Assets/Sound/Sword Attacks Hits and Blocks/Sword Impact Hit 2.ogg", "static"),
     hit3 = love.audio.newSource("Assets/Sound/Sword Attacks Hits and Blocks/Sword Impact Hit 3.ogg", "static"),
-    parry = love.audio.newSource("Assets/Sound/Sword Attacks Hits and Blocks/Sword Parry 1.ogg", "static")
+    parry = love.audio.newSource("Assets/Sound/Sword Attacks Hits and Blocks/Sword Parry 1.ogg", "static"),
+    block = love.audio.newSource("Assets/Sound/Sword Attacks Hits and Blocks/Sword Blocked 1.ogg", "static"),
 
   } 
 end
@@ -81,6 +85,7 @@ function love.update(dt)
 
   player:update(dt)
   bk:update(dt)
+  bk2:update(dt)
   -- print(player.currentState.name)
 end
 -----------------------------------------------------------------------------
@@ -92,33 +97,34 @@ function love.draw()
   love.graphics.setColor(1, 1, 1) -- Volta para branco
 --------------------------------------------
   
-  player:draw()
   bk:draw()
-  
+  bk2:draw()  
+  player:draw()
+
   ------------
   --DRAW ALL BUMP STUFF
-  -- local items = World:getItems()
-  -- for _, item in ipairs(items) do
-  --   local x, y, w, h = World:getRect(item)
-  --   love.graphics.setColor(1, 1, 0 ) -- yellow for everything else
-  --   if item.layer==LAYER.SOLID then 
-  --     love.graphics.setColor(1, 1, 1) -- white for walking collision
-  --   elseif item.layer == LAYER.HURTBOX then
-  --     love.graphics.setColor(1, 0, 0) -- red for take dmg collision
-  --   elseif item.layer == LAYER.ATKBOX then
-  --     love.graphics.setColor(0, 1, 0) -- green for deal dmg collision
-  --   elseif item.layer == LAYER.GUARDBOX then
-  --     love.graphics.setColor(1, 0, 1) -- purple for block collision
-  --   end
-  --   if item.active then
-  --     love.graphics.rectangle("line", x, y, w, h)
-  --   end
-  --   love.graphics.setColor(1, 1, 1) 
-  -- end
+  local items = World:getItems()
+  for _, item in ipairs(items) do
+    local x, y, w, h = World:getRect(item)
+    love.graphics.setColor(1, 1, 0 ) -- yellow for everything else
+    if item.layer==LAYER.SOLID then 
+      love.graphics.setColor(1, 1, 1) -- white for walking collision
+    elseif item.layer == LAYER.HURTBOX then
+      love.graphics.setColor(1, 0, 0) -- red for take dmg collision
+    elseif item.layer == LAYER.ATKBOX then
+      love.graphics.setColor(0, 1, 0) -- green for deal dmg collision
+    elseif item.layer == LAYER.GUARDBOX then
+      love.graphics.setColor(1, 0, 1) -- purple for block collision
+    end
+    if item.active then
+      love.graphics.rectangle("line", x, y, w, h)
+    end
+    love.graphics.setColor(1, 1, 1) 
+  end
   ------------
-  -- love.graphics.setColor(0, 0, 1)
-  -- love.graphics.rectangle("line", 0, 0, player.x, player.y)
-  -- love.graphics.setColor(1, 1, 1) 
+  love.graphics.setColor(0, 0, 1)
+  love.graphics.rectangle("line", 0, 0, player.x, player.y)
+  love.graphics.setColor(1, 1, 1) 
 
   -------------
   push:finish()

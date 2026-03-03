@@ -14,4 +14,3 @@ function Enemy:new(x,y,acceleration, maxSpeed)
   self.acc = acceleration
   self.maxSpd = maxSpeed
 end
-

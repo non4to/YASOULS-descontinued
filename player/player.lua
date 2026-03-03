@@ -27,14 +27,14 @@ local walkBoxOffsetX = 25
 local walkBoxOffsetY = 25
 ----takedmg hitbox
 local hurtBoxW = 30
-local hurtBoxH = 45
+local hurtBoxH = 30--45
 local hurtBoxOffsetX = 15
-local hurtBoxOffsetY = 5
+local hurtBoxOffsetY = 15--5
 ----atk hitbox
-local atkBoxW = 55
-local atkBoxH = 90
+local atkBoxW = 50
+local atkBoxH = 30 --90
 local atkBoxOffsetX = 20
-local atkBoxOffsetY = 40
+local atkBoxOffsetY = 10--40
 local atkFlipOffset = atkBoxOffsetX * 2 + atkBoxW
 -- ----guard hitbox
 -- local guardBoxW = 40
