@@ -1,6 +1,8 @@
 # YASOULS (Yet Another Souls-like)
 
-The Soulslike in the name is mostly because I loved the parry mechanic in From Software's Sekiro:Shadows die twice. After watching a video of a person making their game with duck () I got inspired! I didn't want to make a 3D though, I also really like beat'em ups. So YASOULs is born! Another motivation to start this project was that I really want to be able to play in my other project that you can check here: [clicky](https://non4to.github.io/fgba-project.html).
+![YASOULS Gameplay Demo](Videos/yabetup.gif)
+
+The Soulslike in the name is mostly because I loved the parry mechanic in From Software's Sekiro:Shadows die twice. After watching a video of a person making their game with duck ([clicky](https://www.youtube.com/watch?v=py0U3Bq8azI&t)) I got inspired! I didn't want to make a 3D though, I also really like beat'em ups. So YASOULs is born! Another motivation to start this project was that I really want to be able to play in my other project that you can check here: [clicky](https://non4to.github.io/fgba-project.html).
 
 [FinalNameTBT] is an action-oriented game focusing on parry mechanics, modular behavior for enemies, and a planned evolutionary AI backend. 
 
