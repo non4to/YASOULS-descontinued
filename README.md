@@ -8,7 +8,7 @@ The Soulslike in the name is mostly because I loved the parry mechanic in From S
 
 ---
 
-## 🎯 Project Vision & Core Motivations
+## 🎯 Motivation
 
 The core ideas for **YASOULS** revolve around two main pillars:
 1. **Parry Mechanics:** Inspired by FromSoftware's *Sekiro: Shadows Die Twice*—the game that ignited my passion for the whole genre. I'm a big FromSoft fan now.
@@ -18,7 +18,7 @@ This adaptive loop is conceptually inspired by [*Galactic Arms Race*](https://st
 
 ---
 
-## ⚙️ Architectural Journey & Multi-Platform Strategy
+## ⚙️ Journey
 
 This project serves as a continuous study in engine architectures, hardware limitations, performant game loops and even programming languages. Which is one of the reasons I'm taking my time with it.:
 * **Phase 1 (Godot Engine):** The initial idea was to use Godot to get used to the engine. So I initially prototyped in Godot, but as [FGba](https://non4to.github.io/fgba-project.html) took form, I decided to migrate to something that I was more confortable with and something that I thought would be lighter to run in FGba.
@@ -27,7 +27,7 @@ This project serves as a continuous study in engine architectures, hardware limi
 
 ---
 
-## 🚀 Current Implementation Status
+## 🚀 Current progress
 
 The project is currently focused on **Combat Feel**. 
 
