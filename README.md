@@ -5,6 +5,7 @@
 The Soulslike in the name is mostly because I loved the parry mechanic in From Software's Sekiro:Shadows die twice. After watching a video of a person making their game with duck ([clicky](https://www.youtube.com/watch?v=py0U3Bq8azI&t)) I got inspired! I didn't want to make a 3D though, I also really like beat'em ups. So YASOULs is born! Another motivation to start this project was that I really want to be able to play in my other project that you can check here: [clicky](https://non4to.github.io/fgba-project.html).
 
 [FinalNameTBT] is an action-oriented game focusing on parry mechanics, modular behavior for enemies, and a planned evolutionary AI backend. 
+I decided to move on from lua! Since I've been wanting to learn C from a while, I decided to re-do stuff in C! I'll be using raylib, the new repo is here: https://github.com/non4to/YASOULS
 
 ---
 
